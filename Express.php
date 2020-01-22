@@ -35,26 +35,16 @@ class Express
 
     /**
      * 获取快递公司名称
-     * @param $ExpressNum  快递单号
+     * @param $expressNum //快递单号
      * @return mixed
      * author: james
      * date: 2020-01-22 上午11:26
      */
-    public function getExpressCompany($ExpressNum)
+    public function getExpressCompany($expressNum)
     {
         $headerArray = array("Accept-Language: zh-CN,zh;q=0.8", "Cache-Control: no-cache", "Host:www.kuaidi100.com", "Referer:https://www.kuaidi100.com/");
-        $curl        = curl_init();
-        $url         = "https://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text=" . $ExpressNum;
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('X-FORWARDED-FOR:' . $this->ip, 'CLIENT-IP:' . $this->ip));
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
-        curl_setopt($curl, CURLOPT_POST, 0);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headerArray);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $output = curl_exec($curl);
-        curl_close($curl);
+        $url         = "https://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text=" . $expressNum;
+        $output      = $this->httpGet($url, $headerArray);
         //正常返回
         //{"comCode":"","num":"9473736974","auto":[{"comCode":"debangwuliu","lengthPre":10,"noCount":1550,"noPre":"947373"}]}
         //下面正则匹配名称(json也可以哦)
@@ -75,8 +65,7 @@ class Express
         $expressCompany = $this->getExpressCompany($ExpressNum);
         $cook1          = $this->disguiseCookie('Hm_lvt_22ea01af58ba2be0fec7c11b25e88e6c');
         $cook2          = $this->disguiseCookie('Hm_lpvt_22ea01af58ba2be0fec7c11b25e88e6c', 1, 0);
-        $rand           = mt_rand(1111111111111111, 8888888888888888);
-        $temp           = '0.' . $rand;
+        $temp           = '0.' . mt_rand(1111111111111111, 8888888888888888);
         $headerArray    = array(
             "Accept: application/json, text/javascript, */*; q=0.01",
             "Cache-Control: no-cache",
@@ -84,11 +73,29 @@ class Express
             "Referer:https://www.kuaidi100.com/", "Cookie: $cook1; $cook2",
             "User-Agent:" . $this->userAgent()
         );
-        $curl           = curl_init();
-        $url            = "https://www.kuaidi100.com/query?type=" . $expressCompany . "&postid=" . $ExpressNum . "&temp=" . $temp . "&phone=";
-        //var_dump($url);die;
+
+        $url    = "https://www.kuaidi100.com/query?type=" . $expressCompany . "&postid=" . $ExpressNum . "&temp=" . $temp . "&phone=";
+        $output = $this->httpGet($url, $headerArray);
+        //正常返回
+        //{"comCode":"","num":"9473736974","auto":[{"comCode":"debangwuliu","lengthPre":10,"noCount":1550,"noPre":"947373"}]}
+        //下面正则匹配名称(json也可以哦)
+        return json_decode($output);
+    }
+
+    /**
+     * http 请求
+     * @param $url
+     * @param $headerArray
+     * @return bool|string
+     * author: james
+     * date: 2020-01-22 下午1:57
+     */
+    public function httpGet($url, $headerArray)
+    {
+        $commonHeaderArray = array('X-FORWARDED-FOR:' . $this->ip, 'CLIENT-IP:' . $this->ip);
+        $headerArray       = array_merge($headerArray, $commonHeaderArray);
+        $curl              = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('X-FORWARDED-FOR:' . $this->ip, 'CLIENT-IP:' . $this->ip));
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
         curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
@@ -97,10 +104,7 @@ class Express
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $output = curl_exec($curl);
         curl_close($curl);
-        //正常返回
-        //{"comCode":"","num":"9473736974","auto":[{"comCode":"debangwuliu","lengthPre":10,"noCount":1550,"noPre":"947373"}]}
-        //下面正则匹配名称(json也可以哦)
-        return json_decode($output);
+        return $output;
     }
 
     /**
