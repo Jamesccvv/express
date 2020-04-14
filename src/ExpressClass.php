@@ -1,5 +1,5 @@
 <?php
-
+namespace James\ExpressClass;
 /**
  * 模拟请求快递100抓取数据
  * Created by PhpStorm
