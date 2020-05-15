@@ -1,12 +1,12 @@
 <?php
-
+namespace James\ExpressClass;
 /**
  * 模拟请求快递100抓取数据
  * Created by PhpStorm
  * author: james
  * Class Express
  */
-class Express
+class ExpressClass
 {
     private $ip = '';
 
@@ -168,8 +168,3 @@ class Express
         return $agents[array_rand($agents)];
     }
 }
-
-$express = new Express();
-
-$data = $express->getExpressData('73126161602351');
-var_dump($data);

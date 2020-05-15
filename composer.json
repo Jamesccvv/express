@@ -1,0 +1,22 @@
+{
+    "name": "jamesvv/express",
+    "description": "简单的订单获取类",
+    "authors": [
+        {
+            "name": "James",
+            "email": "609468798@qq.com"
+        }
+    ],
+    "require": {},
+  "autoload": {
+    "psr-4": {
+      "James\\ExpressClass\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "James\\ExpressClass\\Tests\\": "tests/"
+    }
+  },
+  "license": "MIT"
+}
