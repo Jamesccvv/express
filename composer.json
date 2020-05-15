@@ -1,6 +1,6 @@
 {
     "name": "jamesvv/express",
-    "description": "简单的订单获取类",
+    "description": "简单的订单快递信息获取类",
     "authors": [
         {
             "name": "James",
