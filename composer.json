@@ -17,5 +17,6 @@
     "psr-4": {
       "James\\ExpressClass\\Tests\\": "tests/"
     }
-  }
+  },
+  "license": "MIT",
 }
